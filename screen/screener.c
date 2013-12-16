@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <sys/mman.h>
 #include <string.h>
+#include <execinfo.h>
+#include <signal.h>
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -20,78 +22,103 @@ int main(int argc, char *argv[]) {
 	//Read strings from a file and load them in memory
 	//Access and read them from a given position
 
-	/*int fd = open(argv[1], O_RDONLY);
-	if(fd == -1)
+	int fd = open(argv[1], O_RDONLY);
+	if (fd == -1) {
 		perror("Could not open file");
+		exit(1);
+	}
 
-	ssize_t curlen = 1024;
-	char *buffer;
 	char buf[1024];
 	ssize_t ret;
 
-	while((ret = read(fd, &buf, 1024)) != 0) {
-		if(ret == -1) {
-			if(errno == EINTR)
+	struct Table table;
+	table_init(&table);
+
+	while ((ret = read(fd, &buf, 1024)) != 0) {
+		if (ret == -1) {
+			if (errno == EINTR)
 				continue;
 			perror("read");
 			break;
 		}
 
-		curlen += ret;
-//		*buffer += buf;
-		printf("%i bytes read.\n '%s'\n", ret, buf);
-	}*/
+		buffer_append(&buf, ret);
 
+		struct Vector vector;
+		if(process_buffer(&vector) >= 0) {
+			table_append(&table, &vector);
+		}
+	}
 
-	char *str = "RIC,TRBCIndCode,ratios._MktCap,ratios._OpMgnRPY,Company Name";
+	printf("Reached here without errors\n");
 
-	struct Vector header;
-	vector_init(&header);
-	vectorize_csv(&header, str, strlen(str));
-
-	//There can be an unlimited number of rows. We need a vector to manage all rows.
-	str = "VOD.L,551020,48965.5,45684,Vodafone PLC";
-
-	struct Vector row1;
-	vector_init(&row1);
-	vectorize_csv(&row1, str, strlen(str));
-
-	str = "ATKW.L,,12345.5,99676,Atkins Group";
-	struct Vector row2;
-	vector_init(&row2);
-	vectorize_csv(&row2, str, strlen(str));
-
-	struct Table table;
-	table_init(&table);
-	table_append(&table, &header);
-	table_append(&table, &row1);
-	table_append(&table, &row2);
 	table_print(&table);
 
 	printf("Get TRBCIndCode\n");
 	char **rez;
-	if(table_get_values(&table, "TRBCIndCode", rez) >= 0) {
-		for(int i=0; i < table.length-1; i++)
+	if (table_get_values(&table, "TRBCIndCode", rez) >= 0) {
+		for (int i = 0; i < table.length - 1; i++)
 			printf("'%s'\n", rez[i]);
 	}
 
 	table_free(&table);
 }
 
-void vectorize_csv(struct Vector *vector, char *str, size_t length)
-{
-	int l=0;
+char *buffer = NULL;
+unsigned int buffer_capacity = 0;
+unsigned int buffer_length = 0;
+void buffer_append(char *buf, int len) {
+
+	int cap = buffer_capacity - buffer_length;
+
+	if (cap < len) {
+		printf("REALLOCATION\n");
+		buffer_capacity += len;
+		buffer = (char*)realloc(buffer, buffer_capacity);
+	}
+
+	printf("%x, %x\n", buffer, buffer + buffer_length);
+
+	//Read len bytes of *buf, and copy it to buffer.
+	memcpy(buffer + buffer_length, buf, len);
+	buffer_length += len;
+}
+
+int process_buffer(struct Vector *vector) {
+
+	//Iterate through each character, finding a \n
+	for(int i=0 ; i < buffer_length; i++) {
+		if(buffer[i] == '\n') {
+			vector_init(vector);
+
+			//printf("%i. buffer '%.35s'", i, buffer);
+			i++;
+			vectorize_csv(vector, buffer, i);
+			buffer = buffer + i;
+			return i;
+		}
+	}
+
+	return -1;
+}
+
+void vectorize_csv(struct Vector *vector, char *str, size_t length) {
+	int l = 0;
 	int last_comma = 0;
-	for (int i = 0; i <= length; i++)
-	{
-		if(str[i] == ',' || str[i] == '\n' || i == length) {
+	for (int i = 0; i < length; i++) {
+
+		printf("%i = '%c'\n", i, str[i]);
+		if (str[i] == ',' || str[i] == '\n' || i == length) {
+
 			l = i - last_comma;
-			char *_ptr = malloc (l + 1);
+			char *_ptr = malloc(l + 1);
+
 			memcpy(_ptr, &str[last_comma], l);
+			printf("last_comma = %i, l = %i, str = '%c', _ptr = '%s'\n", last_comma, l, str[last_comma], _ptr);
+
 			vector_append(vector, _ptr);
 
-			last_comma = i+1;
+			last_comma = i + 1;
 		}
 	}
 }
-

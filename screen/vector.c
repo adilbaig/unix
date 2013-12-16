@@ -20,11 +20,8 @@ void vector_append(struct Vector *vector, const char *value) {
 	// make sure there's room to expand into
 	vector_increase_capacity(vector, 100);
 
-	char *_ptr;
-	memcpy(_ptr, value, strlen(value));
-
 	// append the value and increment vector->length
-	vector->data[vector->length++] = _ptr;
+	vector->data[vector->length++] = value;
 }
 
 char* vector_get(struct Vector *vector, int index) {
