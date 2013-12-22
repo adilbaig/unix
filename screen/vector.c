@@ -8,6 +8,8 @@ struct Vector {
 	char **data; // array of strings
 };
 
+void vector_increase_capacity(struct Vector *vector, int capacity);
+
 void vector_init(struct Vector *vector) {
 	vector->length = 0;
 	vector->capacity = 100;
@@ -45,7 +47,7 @@ int vector_find(struct Vector *vector, const char value[])
 {
 	for(int i = 0; i < vector->length; i++)
 	{
-		//printf("'%s' == '%s'. CMP = %i\n", vector->data[i], value, strcmp(vector->data[i], value));
+		printf("i = %i, '%s' == '%s'. CMP = %i\n", i, vector->data[i], value, strcmp(vector->data[i], value));
 
 		if(strcmp(vector->data[i], value) == 0)
 			return i;

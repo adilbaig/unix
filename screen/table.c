@@ -13,27 +13,52 @@
 
 /**
  * This table does not use malloc/realloc, but works with variable length arrays as defined in C99.
+ * I've now stopped using it because it causes a stack overflow!
+ */
+
+/**
+ * A Table struct stores a :
+ *  - an array of pointers to a Vector
+ *  - a length
+ *  - current capacity
  */
 struct Table {
 	int length;
 	int capacity;
-	struct Vector* vector[];
+	struct Vector** vectors;
 };
+
+void table_increase_capacity(struct Table *table, int capacity);
 
 void table_init(struct Table *table) {
 	table->length = 0;
 	table->capacity = 100;
 
 	// Allocate space for 100 pointers
-	table->vector[sizeof(size_t) * table->capacity];
+	table->vectors = malloc(sizeof(size_t) * table->capacity);
 }
 
 void table_append(struct Table *table, struct Vector *vector) {
 	// make sure there's room to expand into
-	table_increase_capacity(table, 100);
+	if (table->length >= table->capacity) {
+		table_increase_capacity(table, 100);
+	}
+
+	//printf("table->length = %i table->capacity = %i \n", table->length, table->capacity);
 
 	// append the value and increment table->length
-	table->vector[table->length++] = vector;
+	table->vectors[table->length++] = &vector;
+}
+
+void table_increase_capacity(struct Table *table, int capacity) {
+	// increase table->capacity and resize the allocated memory accordingly
+	table->capacity += capacity;
+	table->vectors = realloc(table->vectors, sizeof(size_t) * table->capacity);
+
+	if(table->vectors == NULL) {
+		perror("Could not realloc table->vectors");
+		exit(1);
+	}
 }
 
 struct Vector* table_get(struct Table *table, int index) {
@@ -43,42 +68,45 @@ struct Vector* table_get(struct Table *table, int index) {
 		exit(1);
 	}
 
-	return table->vector[index];
+	return table->vectors[index];
 }
 
-int table_get_values(struct Table *table, const char search[], char **strings) {
-	int pos = vector_find(table->vector[0], search);
+/**/
+int table_get_values(struct Table *table, const char *search, char **strings) {
+	int pos = vector_find(table_get(table, 0), search);
 	if(pos < 0) {
 		return pos;
 	}
 
-	for(int i=1; i < table->length; i++)
-	{
-		strings[i-1] = vector_get(table->vector[i], pos);
+	for(int i=1; i < table->length; i++) {
+		strings[i-1] = vector_get(table->vectors[i], pos);
 	}
 
 	return pos;
 }
 
-void table_increase_capacity(struct Table *table, int capacity) {
-	if (table->length >= table->capacity) {
 
-		// increase table->capacity and resize the allocated memory accordingly
-		table->capacity += capacity;
-		table->vector[sizeof(size_t) * table->capacity];
-	}
-}
 
 void table_print(struct Table *table) {
 	printf("Printing %i rows from table\n", table->length);
 
 	for (int i = 0; i < table->length; i++) {
-		struct Vector *vector = table_get(table, i);
-		vector_print(vector);
+		printf("Index %i\n", i);
+		vector_print(table_get(table, i));
 	}
 }
 
+
+/*
 void table_free(struct Table *table) {
-	for(int i= 0; i < table->length; i++)
-		vector_free(table->vector[i]);
+	for(int i=0; i < table->length; i++) {
+
+		printf("Freeing %i %x. table->length = %i\n", i, &table->vectors[i], table->length);
+		vector_free(table->vectors[i]);
+
+	}
+
+	//free(table->vectors);
 }
+*/
+
