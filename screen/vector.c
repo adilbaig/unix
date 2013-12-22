@@ -16,12 +16,19 @@ void vector_init(struct Vector *vector) {
 	vector->data = malloc(sizeof(size_t) * vector->capacity);
 }
 
-void vector_append(struct Vector *vector, const char *value) {
+/**
+ * memcpy *value with l length to *vector
+ */
+void vector_append(struct Vector *vector, const char *value, size_t l) {
 	// make sure there's room to expand into
-	vector_increase_capacity(vector, 100);
+	if (vector->length >= vector->capacity) {
+		vector_increase_capacity(vector, 100);
+	}
+
+	char *_ptr = strndup(value, l);
 
 	// append the value and increment vector->length
-	vector->data[vector->length++] = value;
+	vector->data[vector->length++] = _ptr;
 }
 
 char* vector_get(struct Vector *vector, int index) {
@@ -33,15 +40,6 @@ char* vector_get(struct Vector *vector, int index) {
 	return vector->data[index];
 }
 
-void vector_set(struct Vector *vector, int index, const char *value) {
-	// zero fill the vector up to the desired index
-	while (index >= vector->length) {
-		vector_append(vector, 0);
-	}
-
-	// set the value at the desired index
-	vector->data[index] = value;
-}
 
 int vector_find(struct Vector *vector, const char value[])
 {
@@ -58,12 +56,9 @@ int vector_find(struct Vector *vector, const char value[])
 
 //static == (private in PHP)
 void vector_increase_capacity(struct Vector *vector, int capacity) {
-	if (vector->length >= vector->capacity) {
-
-		// increase vector->capacity and resize the allocated memory accordingly
-		vector->capacity += capacity;
-		vector->data = realloc(vector->data, sizeof(size_t) * vector->capacity);
-	}
+	// increase vector->capacity and resize the allocated memory accordingly
+	vector->capacity += capacity;
+	vector->data = realloc(vector->data, sizeof(size_t) * vector->capacity);
 }
 
 void vector_print(struct Vector *vector) {
