@@ -14,7 +14,6 @@ void vector_init(struct Vector *vector) {
 	vector->length = 0;
 	vector->capacity = 100;
 
-	// Allocate space for vector_CAPACITY_BLOCK numbers if pointers
 	vector->data = malloc(sizeof(size_t) * vector->capacity);
 }
 
@@ -28,8 +27,6 @@ void vector_append(struct Vector *vector, const char *value, size_t l) {
 	}
 
 	char *_ptr = strndup(value, l);
-
-	// append the value and increment vector->length
 	vector->data[vector->length++] = _ptr;
 }
 
@@ -58,7 +55,6 @@ int vector_find(struct Vector *vector, const char value[])
 
 //static == (private in PHP)
 void vector_increase_capacity(struct Vector *vector, int capacity) {
-	// increase vector->capacity and resize the allocated memory accordingly
 	vector->capacity += capacity;
 	vector->data = realloc(vector->data, sizeof(size_t) * vector->capacity);
 }

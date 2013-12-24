@@ -47,7 +47,7 @@ void table_append(struct Table *table, struct Vector *vector) {
 	//printf("table->length = %i table->capacity = %i \n", table->length, table->capacity);
 
 	// append the value and increment table->length
-	table->vectors[table->length++] = &vector;
+	table->vectors[table->length++] = vector;
 }
 
 void table_increase_capacity(struct Table *table, int capacity) {
@@ -71,21 +71,22 @@ struct Vector* table_get(struct Table *table, int index) {
 	return table->vectors[index];
 }
 
-/**/
-int table_get_values(struct Table *table, const char *search, char **strings) {
+int table_get_values(struct Table *table, const char *search, char ***strings) {
 	int pos = vector_find(table_get(table, 0), search);
 	if(pos < 0) {
 		return pos;
 	}
 
+	char **_tmp = malloc(sizeof(size_t) * table->length);
+	printf("strings == '%x'\n", strings);
 	for(int i=1; i < table->length; i++) {
-		strings[i-1] = vector_get(table->vectors[i], pos);
+		_tmp[i-1] = vector_get(table->vectors[i], pos);
 	}
+
+	*strings = _tmp;
 
 	return pos;
 }
-
-
 
 void table_print(struct Table *table) {
 	printf("Printing %i rows from table\n", table->length);
@@ -96,17 +97,10 @@ void table_print(struct Table *table) {
 	}
 }
 
-
-/*
 void table_free(struct Table *table) {
 	for(int i=0; i < table->length; i++) {
-
-		printf("Freeing %i %x. table->length = %i\n", i, &table->vectors[i], table->length);
 		vector_free(table->vectors[i]);
-
 	}
 
-	//free(table->vectors);
+	free(table->vectors);
 }
-*/
-
