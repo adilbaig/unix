@@ -24,6 +24,12 @@ int main(void)
 	if (anon == MAP_FAILED || zero == MAP_FAILED)
 			errx(1, "either mmap");
 
+	//Change protection of 0 - 1024 bytes to READ.
+	mprotect(&anon, 1024, PROT_READ);
+
+	//Advice to kernel, read sequentially. It does further readaheads
+	madvise(&anon, 1024, MADV_SEQUENTIAL);
+
 	strcpy(anon, str1);
 	strcpy(zero, str1);
 
