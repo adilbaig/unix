@@ -30,4 +30,35 @@ void main()
     default :
         fprintf(stderr, "Unknown policy!");
     }
+
+    printf("\n");
+
+    /*
+     * Get the priority of the current process.
+     * This is always 0 for non-realtime processes
+     */
+    struct sched_param sp;
+    if(sched_getparam(0, &sp)  == -1) {
+        perror("sched_getparam");
+        return;
+    }
+    printf("Priority is %d \n", sp.__sched_priority);
+
+    /*
+     * Get the range of priorities for a given scheduling policy
+     */
+    int min, max;
+    min = sched_get_priority_min(SCHED_RR);
+    if(min == -1) {
+        perror("sched_get_priority_min");
+        return;
+    }
+
+    max = sched_get_priority_max(SCHED_RR);
+    if(max == -1) {
+        perror("sched_get_priority_max");
+        return;
+    }
+
+    printf("SCHED_RR priority range is %d - %d \n", min, max);
 }
