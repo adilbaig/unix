@@ -1,6 +1,10 @@
 #include <stdio.h>
 #include <fcntl.h>
 
+/**
+ * Advanced Programming In The Unix Environment, 2nd Ed
+ * Pg 450
+ */
 #define writew_lock(fd, offset, whence, len) lock_reg(fd, F_SETLKW, F_WRLCK, offset, whence, len)
 
 static int lock_reg(int fd, int cmd, int type, off_t offset, int whence, off_t len)
@@ -33,7 +37,7 @@ int main(int argc, char *argv[])
 	/**
 	 * Create a file and write two bytes to it
 	 */
-	if((fd = creat("/tmp/templock", "rw")) < 0) {
+	if((fd = creat("/tmp/templock", S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)) < 0) {
 		perror("creat error");
 		return 1;
 	}
