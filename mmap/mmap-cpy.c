@@ -49,6 +49,6 @@ int main(int argc, char* argv[])
 	}
 
 	memcpy(dst, src, statbuf.st_size); //copy the file
-	printf("%s copied to %s succesfully\n", argv[1], argv[2]);
+	printf("%s copied to %s successfully\n", argv[1], argv[2]);
 	return 0;
 }
