@@ -10,21 +10,17 @@
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.VCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
+					<extension id="org.eclipse.cdt.core.MakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.ELF" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-				<configuration buildProperties="" id="cdt.managedbuild.toolchain.gnu.base.1548298926" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
+				<configuration buildProperties="" description="" id="cdt.managedbuild.toolchain.gnu.base.1548298926" name="Default" parent="org.eclipse.cdt.build.core.emptycfg">
 					<folderInfo id="cdt.managedbuild.toolchain.gnu.base.1548298926.1397615800" name="/" resourcePath="">
-						<toolChain id="cdt.managedbuild.toolchain.gnu.base.579374131" name="cdt.managedbuild.toolchain.gnu.base" superClass="cdt.managedbuild.toolchain.gnu.base">
-							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1080785091" name="Debug Platform" osList="linux,hpux,aix,qnx" superClass="cdt.managedbuild.target.gnu.platform.base"/>
-							<builder id="cdt.managedbuild.target.gnu.builder.base.1984178039" managedBuildOn="false" name="Gnu Make Builder.Default" superClass="cdt.managedbuild.target.gnu.builder.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.archiver.base.1599120546" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.base.891357832" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.compiler.base.490411859" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.c.linker.base.282223038" name="GCC C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.base.1107581161" name="GCC C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.base"/>
-							<tool id="cdt.managedbuild.tool.gnu.assembler.base.1340016189" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.base"/>
+						<toolChain id="cdt.managedbuild.toolchain.gnu.base.579374131" name="cdt.managedbuild.toolchain.gnu.base">
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="cdt.managedbuild.target.gnu.platform.base.1080785091" name="Debug Platform" osList="linux,hpux,aix,qnx"/>
+							<builder id="cdt.managedbuild.target.gnu.builder.base.1984178039" keepEnvironmentInBuildfile="false" managedBuildOn="false" name="Gnu Make Builder.Default"/>
 						</toolChain>
 					</folderInfo>
 				</configuration>
@@ -51,4 +47,10 @@
 		<project id="unix.null.1866455187" name="unix"/>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Default">
+			<resource resourceType="PROJECT" workspacePath="/unix"/>
+		</configuration>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
